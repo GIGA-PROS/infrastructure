@@ -52,10 +52,14 @@ pkgs.mkShell {
     # Set environment variable for Node.js version
     export NODE_VERSION="16"
 
-    # Install Sendportal (Email Marketing)  
+    # Sendportal (Email Marketing)  
     composer create-project --prefer-dist laravel/laravel sendportal-app
     cd sendportal-app
     composer require mettle/sendportal-core
+    php artisan vendor:publish --provider="Sendportal\Base\SendportalBaseServiceProvider"
+    php artisan migrate
+    php artisan sp:install
+    php artisan serve --port=4280
 
 '';
 }
