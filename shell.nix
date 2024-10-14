@@ -21,6 +21,7 @@ pkgs.mkShell {
     nodejs
     yarn
     pm2
+    keycloak
 
     # Backend
     dotnet-sdk_8
@@ -50,5 +51,11 @@ pkgs.mkShell {
 
     # Set environment variable for Node.js version
     export NODE_VERSION="16"
-  '';
+
+    # Install Sendportal (Email Marketing)  
+    composer create-project --prefer-dist laravel/laravel sendportal-app
+    cd sendportal-app
+    composer require mettle/sendportal-core
+
+'';
 }
