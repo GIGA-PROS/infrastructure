@@ -28,8 +28,8 @@ pkgs.mkShell {
 
   # Optional: Set environment variables (e.g., AWS credentials)
   # Replace with your actual AWS credentials or use a profile
-  AWS_ACCESS_KEY_ID="your-access-key-id"
-  AWS_SECRET_ACCESS_KEY="your-secret-access-key"
+  AWS_ACCESS_KEY_ID="your-access-key-id";
+  AWS_SECRET_ACCESS_KEY="your-secret-access-key";
 
   # Optional: Start Redis and PostgreSQL within the nix-shell environment
   shellHook = ''
