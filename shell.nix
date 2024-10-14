@@ -2,21 +2,28 @@
 
 pkgs.mkShell {
   # List of packages to be installed in the local environment
-  buildInputs = [
-    pkgs.git
-    pkgs.awscli
-    pkgs.opentofu
-    pkgs.docker
-    pkgs.docker-compose
-    pkgs.nodejs
-    pkgs.yarn
-    pkgs.pm2
-    pkgs.php
-    pkgs.phpPackages.composer    # Correct reference to Composer
-    pkgs.postgresql_16
-    pkgs.redis
-    pkgs.dotnet-sdk_8
-    pkgs.caddy
+  buildInputs = with pkgs; [
+    # Infrastructure
+    git
+    awscli
+    opentofu
+    docker
+    docker-compose
+    postgresql_16
+    redis
+    caddy
+
+    # Sendportal v2 - Specific
+    php
+    phpPackages.composer
+
+    # Common
+    nodejs
+    yarn
+    pm2
+
+    # Backend
+    dotnet-sdk_8
   ];
 
   # Optional: Set environment variables (e.g., AWS credentials)
