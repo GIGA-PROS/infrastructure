@@ -55,7 +55,7 @@ pkgs.mkShell {
     export NODE_VERSION="16" 
 
     # Sendportal (Email Marketing)
-    if [ ! -d "sendportal-app" ] then
+    if [ ! -d "sendportal-app" ]; then  # Added semicolon here
       composer create-project --prefer-dist laravel/laravel sendportal-app
       cd sendportal-app
       composer require mettle/sendportal-core
@@ -64,7 +64,7 @@ pkgs.mkShell {
       php artisan sp:install
       php artisan serve --port=4280
     else
-      echo "Sendportal app already exists. Use FORCE_OVERWRITES=true to overwrite."
+      echo "Sendportal app already exists."
     fi
 '';
 }
