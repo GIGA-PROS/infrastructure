@@ -32,14 +32,10 @@ pkgs.mkShell {
   AWS_ACCESS_KEY_ID="your-access-key-id";
   AWS_SECRET_ACCESS_KEY="your-secret-access-key";
 
-  # Optional: Set FORCE_OVERWRITES variable
-  FORCE_OVERWRITES = "true";  # Set the variable here
 
   # Optional: Start Redis and PostgreSQL within the nix-shell environment
   shellHook = ''
 
-  # Export the variable for use in the shell
-    export FORCE_OVERWRITES="${FORCE_OVERWRITES}"
     echo "Starting Redis and PostgreSQL inside Nix shell..."
 
     # Start Redis
@@ -59,7 +55,7 @@ pkgs.mkShell {
     export NODE_VERSION="16" 
 
     # Sendportal (Email Marketing)
-    if [ ! -d "sendportal-app" ] || [ "$FORCE_OVERWRITES" = "true" ]; then
+    if [ ! -d "sendportal-app" ] then
       composer create-project --prefer-dist laravel/laravel sendportal-app
       cd sendportal-app
       composer require mettle/sendportal-core
