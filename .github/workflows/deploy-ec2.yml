@@ -39,15 +39,57 @@ jobs:
           
           echo "AMI_ID=${AMI_ID}" >> $GITHUB_ENV
 
-      # Step 4: Launch the EC2 instance with a public IP address
+      # Step 4: Launch the EC2 instance without specifying security groups
       - name: Launch EC2 Instance
+        id: launch_instance
         run: |
           echo "Launching EC2 instance with AMI ID: $AMI_ID"
-          aws ec2 run-instances \
+          INSTANCE_ID=$(aws ec2 run-instances \
             --image-id "$AMI_ID" \
             --instance-type t4g.micro \
             --key-name "${{ secrets.EC2_KEY_NAME }}" \
-            --security-groups "${{ secrets.SECURITY_GROUP_NAME }}" \
+            --subnet-id "${{ secrets.SUBNET_ID }}" \
             --associate-public-ip-address \
             --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${{ secrets.EC2_TAG_NAME }}}]" \
-            --count 1
+            --query 'Instances[0].InstanceId' \
+            --output text)
+          
+          if [ -z "$INSTANCE_ID" ]; then
+            echo "Failed to launch EC2 instance."
+            exit 1
+          fi
+          
+          echo "INSTANCE_ID=${INSTANCE_ID}" >> $GITHUB_ENV
+
+      # Step 5: Wait for the instance to be in running state
+      - name: Wait for EC2 Instance to be Running
+        run: |
+          echo "Waiting for instance $INSTANCE_ID to enter 'running' state..."
+          aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
+          echo "Instance $INSTANCE_ID is now running."
+
+      # Step 6: Retrieve the Network Interface ID associated with the instance
+      - name: Retrieve Network Interface ID
+        id: get_network_interface
+        run: |
+          NETWORK_INTERFACE_ID=$(aws ec2 describe-instances \
+            --instance-ids "$INSTANCE_ID" \
+            --query 'Reservations[0].Instances[0].NetworkInterfaces[0].NetworkInterfaceId' \
+            --output text)
+          
+          if [ -z "$NETWORK_INTERFACE_ID" ]; then
+            echo "Failed to retrieve Network Interface ID."
+            exit 1
+          fi
+          
+          echo "NETWORK_INTERFACE_ID=${NETWORK_INTERFACE_ID}" >> $GITHUB_ENV
+
+      # Step 7: Attach the Security Group to the Network Interface
+      - name: Attach Security Group to Network Interface
+        run: |
+          echo "Attaching Security Group ${SECURITY_GROUP_ID} to Network Interface ${NETWORK_INTERFACE_ID}"
+          aws ec2 modify-network-interface-attribute \
+            --network-interface-id "$NETWORK_INTERFACE_ID" \
+            --groups "${{ secrets.SECURITY_GROUP_ID }}"
+          
+          echo "Security Group attached successfully."
