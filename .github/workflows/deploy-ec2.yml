@@ -29,12 +29,13 @@ jobs:
           --filters 'Name=name,Values=nixos/24.05*' \
           'Name=architecture,Values=arm64'
 
-    # (Optional) Add steps here to launch the EC2 instance using the AMI ID
-    # - name: Launch EC2 Instance
-    #   run: |
-    #     aws ec2 run-instances --image-id <ami-id> \
-    #       --instance-type t4g.micro \
-    #       --key-name <your-key-pair> \
-    #       --security-group-ids <your-security-group-id> \
-    #       --subnet-id <your-subnet-id> \
-    #       --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=MyNixOSInstance}]'
+    # Launch the EC2 instance using the AMI ID
+    - name: Launch EC2 Instance
+      run: |
+        aws ec2 run-instances --image-id <ami-id> \
+         --instance-type t4g.micro \
+         --key-name win-mkanagawa \
+         --security-group-ids sg-051feed2a2cd90c71 \ 
+         --subnet-id subnet-0baa470581f46da78 \
+         --associate-public-ip-address \
+         --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=GIGA}]'
