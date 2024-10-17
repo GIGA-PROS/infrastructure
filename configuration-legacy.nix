@@ -8,7 +8,10 @@
   boot.loader.grub.devices = [ "/dev/xvda" ];
 
   networking.hostName = "nixos-ec2";
-  networking.firewall.allowedTCPPorts = [ 80 443 ];
+  networking.firewall.allowedTCPPorts = [
+    80
+    443
+  ];
 
   # Timezone and locale
   time.timeZone = "UTC";
@@ -19,7 +22,10 @@
     isNormalUser = true;
     home = "/home/ec2-user";
     shell = pkgs.bash;
-    extraGroups = [ "wheel" "docker" ];
+    extraGroups = [
+      "wheel"
+      "docker"
+    ];
   };
 
   # Packages to be installed
