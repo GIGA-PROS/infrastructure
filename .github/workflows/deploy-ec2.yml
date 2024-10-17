@@ -40,7 +40,7 @@ jobs:
         aws ec2 run-instances --image-id $AMI_ID \
          --instance-type t4g.micro \
          --key-name win-mkanagawa \
-         --security-group-ids sg-051feed2a2cd90c71 \ 
+         --security-group-ids sc-ec2-lms \ 
          --subnet-id subnet-0baa470581f46da78 \
          --associate-public-ip-address \
          --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=GIGA}]'
