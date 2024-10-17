@@ -5,42 +5,58 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      instance_type:
+        description: 'EC2 Instance Type'
+        required: false
+        default: 't4g.micro'
+      tag_name:
+        description: 'Tag Name for the EC2 Instance'
+        required: false
+        default: 'GIGA'
 
 jobs:
   deploy-ec2:
     runs-on: ubuntu-latest
     steps:
-    # Checkout the repository
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # Configure AWS credentials using GitHub Secrets
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-west-2 
+      # Configure AWS credentials using GitHub Secrets
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2 
 
-    # Describe the available NixOS AMIs
-    - name: Describe NixOS AMIs
-      run: |
-        aws ec2 describe-images --owners 427812963091 \
-          --filters 'Name=name,Values=nixos/24.05*' \
-          'Name=architecture,Values=arm64'
-
-    # Launch the EC2 instance using the AMI ID
-    - name: Launch EC2 Instance
-      run: |
-        AMI_ID=$(aws ec2 describe-images --owners 427812963091 \
-          --filters 'Name=name,Values=nixos/24.05*' \
-          'Name=architecture,Values=arm64' \
-          --query 'Images[0].ImageId' --output text)
+      # Describe the available NixOS AMIs and set AMI_ID as an environment variable
+      - name: Describe NixOS AMIs
+        id: describe_ami
+        run: |
+          AMI_ID=$(aws ec2 describe-images --owners 427812963091 \
+            --filters 'Name=name,Values=nixos/24.05*' \
+            'Name=architecture,Values=arm64' \
+            --query 'Images[0].ImageId' --output text)
           
-        aws ec2 run-instances --image-id $AMI_ID \
-         --instance-type t4g.micro \
-         --key-name win-mkanagawa \
-         --security-group-ids sc-ec2-lms \ 
-         --subnet-id subnet-0baa470581f46da78 \
-         --associate-public-ip-address \
-         --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=GIGA}]'
+          if [ -z "$AMI_ID" ]; then
+            echo "No AMI found matching the criteria."
+            exit 1
+          fi
+          
+          echo "AMI_ID=${AMI_ID}" >> $GITHUB_ENV
+
+      # Launch the EC2 instance with a public IP address
+      - name: Launch EC2 Instance
+        run: |
+          echo "Launching EC2 instance with AMI ID: $AMI_ID"
+          aws ec2 run-instances \
+            --image-id "$AMI_ID" \
+            --instance-type "${{ github.event.inputs.instance_type }}" \
+            --key-name "${{ secrets.EC2_KEY_NAME }}" \
+            --security-groups "sc-ec2-lms" \  
+            --subnet-id "${{ secrets.SUBNET_ID }}" \
+            --associate-public-ip-address \
+            --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${{ github.event.inputs.tag_name }}}]" \
+            --count 1
