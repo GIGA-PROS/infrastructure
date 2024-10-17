@@ -5,15 +5,6 @@ on:
     branches:
       - main
   workflow_dispatch:
-    inputs:
-      instance_type:
-        description: 'EC2 Instance Type'
-        required: false
-        default: 't4g.micro'
-      tag_name:
-        description: 'Tag Name for the EC2 Instance'
-        required: false
-        default: 'GIGA'
 
 jobs:
   deploy-ec2:
@@ -53,10 +44,10 @@ jobs:
           echo "Launching EC2 instance with AMI ID: $AMI_ID"
           aws ec2 run-instances \
             --image-id "$AMI_ID" \
-            --instance-type "${{ github.event.inputs.instance_type }}" \
+            --instance-type "t4g.micro" \
             --key-name "${{ secrets.EC2_KEY_NAME }}" \
             --security-groups "sc-ec2-lms" \  
-            --subnet-id "${{ secrets.SUBNET_ID }}" \
+            --subnet-id "subnet-0baa470581f46da78" \
             --associate-public-ip-address \
-            --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${{ github.event.inputs.tag_name }}}]" \
+            --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=GIGA}]" \
             --count 1
