@@ -3,3 +3,7 @@ composer.lock
 composer.json
 logfile
 /sendportal*
+
+# Nix
+result
+*.qcow2

@@ -23,7 +23,6 @@ Before you begin, ensure you have the following installed on your local machine:
 - **Nix**: [Installation guide](https://nixos.org/download.html)
 - **ToFu**: [ToFu documentation](https://github.com/NixOS/tofu)
 - **AWS CLI**: Optional, but useful for managing AWS resources directly.
-- **NixOps**: Optional, if you prefer to use it for managing NixOS deployments.
 
 ---
 
@@ -34,8 +33,9 @@ This repository contains a `shell.nix` file that provides an environment with al
 To enter the environment, use the following command:
 
 ```bash
-nix-shell
+nix develop --impure
 ```
+or use [direnv](https://github.com/direnv/direnv).
 
 This will provide you with an isolated shell where ToFu and AWS CLI are available.
 

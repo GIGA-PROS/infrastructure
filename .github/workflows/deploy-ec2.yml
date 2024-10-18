@@ -2,9 +2,6 @@ name: Deploy EC2 Instance
 
 # Trigger the workflow manually and on push to main branch
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
