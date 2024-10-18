@@ -27,10 +27,7 @@ jobs:
       - name: Describe NixOS AMIs
         id: describe_ami
         run: |
-          AMI_ID=$(aws ec2 describe-images --owners 427812963091 \
-            --filters 'Name=name,Values=nixos/24.05*' \
-            'Name=architecture,Values=x86_64' \
-            --query 'Images[0].ImageId' --output text)
+          AMI_ID="ami-0c861134bede6def6"
           
           if [ -z "$AMI_ID" ]; then
             echo "No AMI found matching the criteria."
