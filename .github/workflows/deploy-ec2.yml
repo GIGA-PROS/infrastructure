@@ -29,7 +29,7 @@ jobs:
         run: |
           AMI_ID=$(aws ec2 describe-images --owners 427812963091 \
             --filters 'Name=name,Values=nixos/24.05*' \
-            'Name=architecture,Values=arm64' \
+            'Name=architecture,Values=x86_64' \
             --query 'Images[0].ImageId' --output text)
           
           if [ -z "$AMI_ID" ]; then
@@ -39,7 +39,7 @@ jobs:
           
           echo "AMI_ID=${AMI_ID}" >> $GITHUB_ENV
 
-      # Step 4: Launch the EC2 instance without specifying security groups
+      # Step 4: Launch the EC2 instance with 64 GB disk size
       - name: Launch EC2 Instance
         id: launch_instance
         run: |
@@ -50,6 +50,7 @@ jobs:
             --key-name "${{ secrets.EC2_KEY_NAME }}" \
             --subnet-id "${{ secrets.SUBNET_ID }}" \
             --associate-public-ip-address \
+            --block-device-mappings '[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":64}}]' \
             --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=${{ secrets.EC2_TAG_NAME }}}]" \
             --query 'Instances[0].InstanceId' \
             --output text)
