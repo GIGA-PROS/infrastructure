@@ -19,6 +19,9 @@
       "pg_stat_statements.max" = 10000;
       "pg_stat_statements.track" = "all";
     };
+    ensureDatabases = [
+      "mmo"
+    ];
     extraPlugins = with pkgs.postgresql_16.pkgs; [
       periods
       repmgr

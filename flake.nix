@@ -35,7 +35,9 @@
             ./modules/postgres.nix
           ];
 
-          specialArgs = { inherit pkgs; };
+          specialArgs = {
+            inherit pkgs;
+          };
         };
 
         program =
@@ -63,7 +65,9 @@
                 ./modules/docker.nix
                 ./modules/postgres.nix
               ];
-              specialArgs = { inherit pkgs; };
+              specialArgs = {
+                inherit pkgs;
+              };
             };
           };
         };
