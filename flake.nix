@@ -27,13 +27,15 @@
           system = builtins.replaceStrings [ "darwin" ] [ "linux" ] system;
 
           modules = [
-            (import ./modules/qemu.nix)
-            (import ./modules/misc.nix { pkgs = pkgs; })
-            (import ./modules/docker.nix { pkgs = pkgs; })
-            (import ./modules/erlang.nix { pkgs = pkgs; })
-            (import ./modules/docker.nix { pkgs = pkgs; })
-            (import ./modules/postgres.nix { pkgs = pkgs; })
+            ./modules/qemu.nix
+            ./modules/misc.nix
+            ./modules/docker.nix
+            ./modules/erlang.nix
+            ./modules/docker.nix
+            ./modules/postgres.nix
           ];
+
+          specialArgs = { inherit pkgs; };
         };
 
         program =
@@ -48,9 +50,22 @@
           '';
       in
       {
-        # nix build
         packages = {
-          inherit machine;
+          # NixOS Remote VM
+          nixosConfigurations = {
+            kanagawa = nixpkgs.lib.nixosSystem {
+              system = "x86_64-linux";
+              modules = [
+                ./configuration.nix
+                ./modules/misc.nix
+                ./modules/docker.nix
+                ./modules/erlang.nix
+                ./modules/docker.nix
+                ./modules/postgres.nix
+              ];
+              specialArgs = { inherit pkgs; };
+            };
+          };
         };
 
         # nix run

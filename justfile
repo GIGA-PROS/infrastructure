@@ -11,9 +11,13 @@ alias r := run
 default:
     just --list
 
-# Builds a Qemu VM
+# Builds the remote AWS EC2 VM
 build:
-    nix run
+    nix build .#nixosConfigurations.kanagawa.config.system.build.toplevel
+
+# Deploys the VM to EC2
+deploy:
+    ./deploy.sh
 
 # Runs a Qemu VM
 run:
