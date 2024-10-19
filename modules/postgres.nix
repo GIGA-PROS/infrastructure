@@ -20,6 +20,7 @@
       "pg_stat_statements.track" = "all";
     };
     ensureDatabases = [
+      "backend"
       "mmo"
     ];
     extraPlugins = with pkgs.postgresql_16.pkgs; [
@@ -28,6 +29,9 @@
     ];
     initialScript = pkgs.writeText "init-sql-script" ''
       CREATE EXTENSION pg_stat_statements;
+      CREATE USER admin SUPERUSER;
+      ALTER USER admin PASSWORD 'admin';
+      GRANT ALL PRIVILEGES ON DATABASE mmo to admin;
     '';
   };
 
