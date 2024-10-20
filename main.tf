@@ -90,6 +90,30 @@ data "aws_ami" "nixos_ami" {
   owners = ["427812963091"]
 }
 
+# Bootstrap VM
+#resource "aws_instance" "vm" {
+#  ami = data.aws_ami.nixos_ami.id
+#
+#  # We could use a smaller instance size, but at the time of this writing the
+#  # t3.micro instance type is available for 750 hours under the AWS free tier.
+#  instance_type = "t3.micro"
+#
+#  # Install the security groups we defined earlier
+#  security_groups = [aws_security_group.sg.name]
+#
+#  key_name = aws_key_pair.ssh_key.key_name
+#
+#  root_block_device {
+#    volume_size = 64
+#  }
+#
+#  user_data = <<-EOF
+#    #!/bin/sh
+#    (umask 377; echo '${tls_private_key.ssh_key.private_key_openssh}' > /var/lib/id_ed25519)
+#    EOF
+#}
+
+# Work VM
 resource "aws_instance" "vm" {
   #ami = var.ami
   ami = data.aws_ami.nixos_ami.id
