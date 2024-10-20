@@ -60,6 +60,7 @@
               modules = [
                 ./configuration.nix
                 ./modules/misc.nix
+                ./modules/users.nix
                 ./modules/docker.nix
                 ./modules/erlang.nix
                 ./modules/docker.nix
