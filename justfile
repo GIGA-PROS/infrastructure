@@ -2,7 +2,7 @@ set dotenv-load
 set export := true
 
 target_region := env_var_or_default("TARGET_REGION", "us-east-1")
-target_vm := env_var_or_default("TARGET_VM", "nekoma")
+target_vm := env_var_or_default("TARGET_VM", "kanagawa")
 target_vm_bootstap := env_var_or_default("TARGET_VM_BOOTSTRAP", "bootstrap")
 target_flake := ".#" + target_vm
 target_flake_bootstrap := ".#nixosConfigurations." + target_vm_bootstap
