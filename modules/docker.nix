@@ -23,7 +23,7 @@
           MYSQL_ROOT_PASSWORD = "yourpassword"; 
         };
         volumes = [ 
-          "/home/user/frappe/crm/docker/docker-compose.yml:/app/docker-compose.yml",
+          "/home/user/frappe/crm/docker/docker-compose.yml:/app/docker-compose.yml"
           "/home/user/frappe/crm/docker/init.sh:/app/init.sh"
         ];
       };
