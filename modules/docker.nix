@@ -13,15 +13,14 @@
 
   # OCI Containers - Run Frappe CRM as a systemd service
   virtualisation.oci-containers = {
-    backend = "docker";  # Use Docker backend for OCI
+    backend = "docker";  
     containers = {
       frappe-crm = {
-        image = "frappe/crm:latest";  # Pull the latest image from the repo
-        restartPolicy = "always";     # Ensure container restarts on failure
-        ports = [ "8000:8000" ];      # Map port 8000 to host
+        image = "frappe/crm:latest";  
+        restartPolicy = "always";
+        ports = [ "8000:8000" ];      
         environment = {
-          MYSQL_ROOT_PASSWORD = "yourpassword";  # Set MySQL root password
-          # Add more necessary environment variables if needed
+          MYSQL_ROOT_PASSWORD = "yourpassword"; 
         };
         volumes = [ 
           "/home/user/frappe/crm/docker/docker-compose.yml:/app/docker-compose.yml",
