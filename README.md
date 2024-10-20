@@ -37,7 +37,28 @@ nix develop --impure
 ```
 or use [direnv](https://github.com/direnv/direnv).
 
-This will provide you with an isolated shell where ToFu and AWS CLI are available.
+This will provide you with an isolated shell where Terraform and AWS CLI are available.
+
+### Provisioning with Terraform
+
+```bash
+just update-vars
+terraform init
+just plan
+just apply
+```
+
+After the terraform deploy is done, you won't need to use it again. This is only required to bootstrap the infra.
+
+### NixOS Deploys
+
+This uses the hostname that was created by terraform it can be found by typing `cat output.json` in the project's root.
+
+```bash
+deploy
+# or
+just deploy
+```
 
 ---
 

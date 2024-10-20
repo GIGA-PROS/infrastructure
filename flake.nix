@@ -2,6 +2,13 @@
   inputs = {
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
 
+    disko = {
+      url = "github:nix-community/disko/latest";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    agenix.url = "github:ryantm/agenix";
+
     devenv = {
       url = "github:cachix/devenv";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -15,24 +22,30 @@
       self,
       nixpkgs,
       flake-utils,
+      agenix,
       devenv,
+      disko,
       ...
     }@inputs:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        pkgs = nixpkgs.legacyPackages."${system}";
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
 
         machine = nixpkgs.lib.nixosSystem {
           system = builtins.replaceStrings [ "darwin" ] [ "linux" ] system;
 
           modules = [
             ./modules/qemu.nix
-            ./modules/misc.nix
+            ./modules/extras.nix
             ./modules/docker.nix
             ./modules/erlang.nix
             ./modules/docker.nix
             ./modules/postgres.nix
+            ./modules/users.nix
           ];
 
           specialArgs = {
@@ -52,21 +65,40 @@
           '';
       in
       {
+        # nix build
         packages = {
-          # NixOS Remote VM
+          # Remote NixOS AWS VM
           nixosConfigurations = {
+            # This config is used when in the Terraform provisioning, so
+            # it contains the bare minimum for us to log in there with ssh
+            bootstrap = nixpkgs.lib.nixosSystem {
+              system = "x86_64-linux";
+              modules = [
+                ./configuration.nix
+                ./modules/extras.nix
+                ./modules/users.nix
+              ];
+              specialArgs = {
+                inherit pkgs;
+              };
+            };
+
+            # After provisioning the infra with Terraform, we start to deploy
+            # this configuration here.
             kanagawa = nixpkgs.lib.nixosSystem {
               system = "x86_64-linux";
               modules = [
                 ./configuration.nix
                 ./modules/misc.nix
+                ./modules/extras.nix
                 ./modules/docker.nix
                 ./modules/erlang.nix
                 ./modules/docker.nix
                 ./modules/postgres.nix
+                ./modules/users.nix
               ];
               specialArgs = {
-                inherit pkgs;
+                inherit pkgs agenix;
               };
             };
           };
@@ -94,9 +126,14 @@
                     just
                   ];
 
+                  languages.terraform = {
+                    enable = true;
+                  };
+
                   scripts = {
                     build.exec = "just build";
                     run.exec = "just run";
+                    deploy.exec = "just deploy";
                   };
 
                   # looks for the .env by default additionaly, there is .filename

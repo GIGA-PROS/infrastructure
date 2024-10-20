@@ -6,6 +6,6 @@
   ];
 
   environment.variables = {
-    ERL_AFLAGS = "+pc unicode -kernel shell_history enabled";
+    ERL_AFLAGS="+pc unicode -kernel shell_history enabled";
   };
 }
