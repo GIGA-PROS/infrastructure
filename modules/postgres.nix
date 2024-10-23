@@ -9,6 +9,9 @@
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_16;
+    ensureDatabases = [
+      "backend"
+    ];
     settings = {
       shared_preload_libraries = "pg_stat_statements";
       # pg_stat_statements config, nested attr sets need to be
@@ -29,7 +32,7 @@
   services.pgbouncer = {
     enable = true;
     databases = {
-      mmo = "host=localhost port=5432 dbname=mmo auth_user=admin";
+      backend = "host=localhost port=5432 dbname=backend auth_user=admin";
     };
     extraConfig = ''
       min_pool_size=5

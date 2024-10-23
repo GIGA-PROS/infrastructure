@@ -69,6 +69,15 @@ deploy
 just deploy
 ```
 
+#### Agenix
+
+If you want to create or modify a secret, make sure to:
+```bash
+cd secrets
+nix run github:ryantm/agenix -- -e <file>.age
+```
+then proceed to run `just rekey`.
+
 ---
 
 ## NixOS Configuration
