@@ -30,7 +30,7 @@ variable "flake" {
 }
 
 provider "aws" {
-  profile = "nekoma"
+  profile = "kanagawa"
   region  = var.region
 }
 
@@ -47,7 +47,7 @@ resource "aws_vpc" "vpc" {
 
   tags = {
     Category = "network"
-    Project  = "trashcan"
+    Project  = "giga"
   }
 }
 
@@ -68,7 +68,7 @@ resource "aws_subnet" "subnet" {
 
   tags = {
     Category = "network"
-    Project  = "trashcan"
+    Project  = "giga"
   }
 }
 
@@ -83,7 +83,7 @@ resource "aws_route_table" "rt" {
 
   tags = {
     Category = "network"
-    Project  = "trashcan"
+    Project  = "giga"
   }
 }
 
@@ -129,7 +129,7 @@ resource "aws_security_group" "sg" {
 
   tags = {
     Category = "network"
-    Project  = "trashcan"
+    Project  = "giga"
   }
 }
 
@@ -199,7 +199,7 @@ resource "aws_instance" "vm" {
 
   tags = {
     Category = "vm"
-    Project  = "trashcan"
+    Project  = "giga"
   }
 }
 
