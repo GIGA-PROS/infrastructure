@@ -5,6 +5,7 @@
 
   # Networking
   networking.firewall.allowedTCPPorts = [ 22 80 443 ];
+  networking.hostName = "trashcan";
 
   services.fail2ban = {
     enable = true;
@@ -39,7 +40,7 @@
     ports = [ 22 ];
     settings = {
       PasswordAuthentication = false;
-      AllowUsers = [ "deploy" "benevides" "kanagawa" ];
+      AllowUsers = [ "deploy" "benevides" "kanagawa" "lemos" "magueta" "marinho" ];
       X11Forwarding = false;
       # "yes", "without-password", "prohibit-password", "forced-commands-only", "no"
       PermitRootLogin = "prohibit-password";

@@ -39,12 +39,14 @@
           system = builtins.replaceStrings [ "darwin" ] [ "linux" ] system;
 
           modules = [
+            agenix.nixosModules.default
             ./modules/qemu.nix
-            ./modules/extras.nix
+            ./modules/caddy.nix
             ./modules/docker.nix
             ./modules/erlang.nix
-            ./modules/docker.nix
-            ./modules/postgres.nix
+            ./modules/extras.nix
+            ./modules/misc.nix
+            #./modules/postgres.nix
             ./modules/users.nix
           ];
 
@@ -88,14 +90,16 @@
             kanagawa = nixpkgs.lib.nixosSystem {
               system = "x86_64-linux";
               modules = [
+                agenix.nixosModules.default
                 ./configuration.nix
-                ./modules/misc.nix
-                ./modules/extras.nix
+                ./modules/caddy.nix
                 ./modules/docker.nix
                 ./modules/erlang.nix
-                ./modules/docker.nix
+                ./modules/extras.nix
+                ./modules/misc.nix
                 ./modules/postgres.nix
                 ./modules/users.nix
+                ./modules/secrets.nix
               ];
               specialArgs = {
                 inherit pkgs agenix;

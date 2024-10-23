@@ -21,7 +21,7 @@ default:
 
 # Builds the remote AWS EC2 VM
 build:
-    nix build {{target_flake}}.config.system.build.toplevel
+    nix build ".#nixosConfigurations.{{target_vm}}.config.system.build.toplevel"
 
 # Deploys the VM to EC2
 deploy:
@@ -34,6 +34,13 @@ repl:
 # Runs a Qemu VM, to quickly test changes
 run:
     nix run
+
+# ----------------
+# Agenix Commands
+# ----------------
+# Updates agenix keys
+rekey:
+    cd secrets && nix run github:ryantm/agenix -- -r
 
 # ------------------
 # Terraform Commands
