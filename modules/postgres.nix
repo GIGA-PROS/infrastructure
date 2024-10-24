@@ -1,15 +1,17 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   environment.systemPackages = with pkgs; [
     barman
-    pgbouncer
   ];
 
   # Postgres
   services.postgresql = {
     enable = true;
     package = pkgs.postgresql_16;
+    ensureDatabases = [
+      "backend"
+    ];
     settings = {
       shared_preload_libraries = "pg_stat_statements";
       # pg_stat_statements config, nested attr sets need to be
@@ -19,20 +21,26 @@
       "pg_stat_statements.max" = 10000;
       "pg_stat_statements.track" = "all";
     };
-    ensureDatabases = [
-      "backend"
-      "mmo"
-    ];
     extraPlugins = with pkgs.postgresql_16.pkgs; [
       periods
       repmgr
     ];
-    initialScript = pkgs.writeText "init-sql-script" ''
-      CREATE EXTENSION pg_stat_statements;
-      CREATE USER admin SUPERUSER;
-      ALTER USER admin PASSWORD 'admin';
-      GRANT ALL PRIVILEGES ON DATABASE mmo to admin;
+    initialScript = config.age.secrets.init_sql.file;
+  };
+
+  # PG Bouncer
+  services.pgbouncer = {
+    enable = true;
+    databases = {
+      backend = "host=localhost port=5432 dbname=backend auth_user=admin";
+    };
+    extraConfig = ''
+      min_pool_size=5
+      reserve_pool_size=5
+      max_client_conn=400
     '';
+    listenAddress = "*";
+    listenPort = 6432;
   };
 
   # haproxy

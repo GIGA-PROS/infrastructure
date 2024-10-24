@@ -1,11 +1,11 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    erlang
+    erlang_27
     rebar3
   ];
 
   environment.variables = {
-    ERL_AFLAGS = "+pc unicode -kernel shell_history enabled";
+    ERL_AFLAGS="+pc unicode -kernel shell_history enabled";
   };
 }

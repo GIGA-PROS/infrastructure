@@ -1,9 +1,4 @@
-{
-  pkgs,
-  lib,
-  modulesPath,
-  ...
-}:
+{ pkgs, lib, modulesPath, ... }:
 {
   imports = [ "${modulesPath}/virtualisation/qemu-vm.nix" ];
 
@@ -13,13 +8,9 @@
   virtualisation = {
     graphics = false;
 
-    #forwardPorts = [
-    #  {
-    #    from = "host";
-    #    guest.port = 443;
-    #    host.port = 443;
-    #  }
-    #];
+    forwardPorts = [
+      { from = "host"; guest.port = 443; host.port = 8080; }
+    ];
 
     host = {
       inherit pkgs;
