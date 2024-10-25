@@ -1,6 +1,6 @@
 [app]
 # Interface and port where the app will run its webserver.
-address = "localhost:3040"
+address = "0.0.0.0:9000"
 
 # Database.
 [db]

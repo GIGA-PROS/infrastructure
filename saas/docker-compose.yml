@@ -76,6 +76,8 @@ services:
     hostname: https://newsletter.gigapros.io # Recommend using FQDN for hostname
     ports:
       - "3040:9000"
+      - "9000:9000"
+
     networks:
       - shared-network
     environment:
