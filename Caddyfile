@@ -1,0 +1,22 @@
+info.gigapros.io {
+	handle /* {
+		root * /var/www/chatwoot/privacy
+		file_server
+	}
+}
+
+notion.gigapros.io {
+        reverse_proxy localhost:3010
+}
+
+meet.gigapros.io {
+        reverse_proxy localhost:3020
+}
+
+post.gigapros.io {
+        reverse_proxy localhost:3030
+}
+
+newsletter.gigapros.io {
+	reverse_proxy localhost:3040
+}

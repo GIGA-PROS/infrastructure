@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  # PostgreSQL service to be shared by Listmonk and Postiz
+  postgres:
+    image: postgres:14.5
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: giga
+      POSTGRES_USER: giga
+      POSTGRES_DB: giga
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - shared-network
+    healthcheck:
+      test: pg_isready -U giga -d giga
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # Redis service for Postiz
+  redis:
+    image: redis:7.2
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: redis-cli ping
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - redis-data:/data
+    networks:
+      - shared-network
+
+  # Postiz service
+  postiz:
+    image: ghcr.io/gitroomhq/postiz-app:latest
+    container_name: postiz
+    restart: always
+    environment:
+      MAIN_URL: "https://post.gigapros.io"
+      FRONTEND_URL: "https://post.gigapros.io"
+      NEXT_PUBLIC_BACKEND_URL: "https://post.gigapros.io/api"
+      JWT_SECRET: "76a218bb-e83b-4ca3-a8c7-8c3c7abb0271"
+      DATABASE_URL: "postgresql://giga:giga@postgres:5432/giga"
+      REDIS_URL: "redis://redis:6379"
+      BACKEND_INTERNAL_URL: "http://localhost:3000"
+      IS_GENERAL: "true"
+      STORAGE_PROVIDER: "local"
+      UPLOAD_DIRECTORY: "/uploads"
+      NEXT_PUBLIC_UPLOAD_DIRECTORY: "/uploads"
+    volumes:
+      - postiz-config:/config/
+      - postiz-uploads:/uploads/
+    ports:
+      - 3030:5000
+    networks:
+      - shared-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Listmonk application service
+  listmonk:
+    image: listmonk/listmonk:latest
+    container_name: listmonk
+    restart: unless-stopped
+    hostname: newsletter.gigapros.io # Recommend using FQDN for hostname
+    ports:
+      - "3040:9000"
+    networks:
+      - shared-network
+    environment:
+      - TZ=Etc/UTC
+      - DATABASE_URL=postgresql://giga:giga@postgres:5432/giga
+    volumes:
+      - ./saas/listmonk/config.toml:/listmonk/config.toml
+    command: [ sh, -c, "yes | ./listmonk --install --config config.toml && ./listmonk --config config.toml" ]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+networks:
+  shared-network:
+    external: false
+
+volumes:
+  postgres-volume:
+    external: false
+  redis-data:
+    external: false
+  postiz-config:
+    external: false
+  postiz-uploads:
+    external: false
