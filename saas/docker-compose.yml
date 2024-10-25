@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   # PostgreSQL service to be shared by Listmonk and Postiz
@@ -83,33 +82,12 @@ services:
       - TZ=Etc/UTC
       - DATABASE_URL=postgresql://giga:giga@postgres:5432/giga
     volumes:
-      - ./saas/listmonk/config.toml:/listmonk/config.toml
+      - ./listmonk/config.toml:/listmonk/config.toml
     command: [ sh, -c, "yes | ./listmonk --install --config config.toml && ./listmonk --config config.toml" ]
     depends_on:
       postgres:
         condition: service_healthy
 
-  mirotalk:
-      image: mirotalk/sfu:latest
-      # build:
-      #     context: .
-      #     dockerfile: Dockerfile
-      container_name: mirotalk
-      hostname: mirotalk
-      restart: unless-stopped
-      volumes:
-          - ./app/src/config.js:/src/app/src/config.js:ro
-          # These volume is mandatory if server.recording.enabled in the app/src/config.js
-          - ./app/rec:/src/app/rec
-          # These volume is mandatory if server.rtmp.enabled fromFile in the app/src/config.js
-          - ./app/rtmp:/src/app/rtmp
-          # These volumes are not mandatory, comment if you want to use it
-          - ./app/:/src/app/:ro
-          - ./public/:/src/public/:ro
-      ports:
-          - '3010:3010/tcp'
-          - '40000-40100:40000-40100/tcp'
-          - '40000-40100:40000-40100/udp'
 networks:
   shared-network:
     external: false
