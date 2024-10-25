@@ -82,6 +82,7 @@ services:
         condition: service_healthy
   # Used to host CRM and LMS
   frappe:
+    container_name: frappe
     image: frappe/bench:latest
     command: bash /workspace/frappe/frappe.sh
     environment:
