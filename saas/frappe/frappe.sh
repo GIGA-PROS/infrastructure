@@ -25,6 +25,7 @@ sed -i '/redis/d' ./Procfile
 sed -i '/watch/d' ./Procfile
 
 bench get-app lms
+bench get-app crm
 
 bench new-site lms.localhost \
 --force \
@@ -35,6 +36,9 @@ bench new-site lms.localhost \
 bench --site lms.localhost install-app lms
 bench --site lms.localhost set-config developer_mode 1
 bench --site lms.localhost clear-cache
+bench --site crm.localhost install-app crm
+
 bench use lms.localhost
+bench use crm.localhost
 
 bench start
