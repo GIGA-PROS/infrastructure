@@ -1,5 +1,18 @@
 
 services:
+  # Frappe LMS
+  mariadb:
+    image: mariadb:10.6
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+      - --skip-innodb-read-only-compressed # Temporary fix for MariaDB 10.6
+    environment:
+      MYSQL_ROOT_PASSWORD: 123
+    volumes:
+      - mariadb-data:/var/lib/mysql
+
   # PostgreSQL service to be shared by Listmonk and Postiz
   postgres:
     image: postgres:14.5
@@ -67,6 +80,18 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+  # Used to host CRM and LMS
+  frappe:
+    image: frappe/bench:latest
+    command: bash /workspace/frappe/frappe.sh
+    environment:
+      - SHELL=/bin/bash
+    working_dir: /home/frappe
+    volumes:
+      - .:/workspace
+    ports:
+      - 8000:8000
+      - 9000:9000
 
   # Listmonk application service
   listmonk:
@@ -76,8 +101,6 @@ services:
     hostname: https://newsletter.gigapros.io # Recommend using FQDN for hostname
     ports:
       - "3040:9000"
-      - "9000:9000"
-
     networks:
       - shared-network
     environment:
@@ -103,3 +126,4 @@ volumes:
     external: false
   postiz-uploads:
     external: false
+  mariadb-data:
