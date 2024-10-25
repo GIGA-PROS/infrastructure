@@ -73,7 +73,7 @@ services:
     image: listmonk/listmonk:latest
     container_name: listmonk
     restart: unless-stopped
-    hostname: newsletter.gigapros.io # Recommend using FQDN for hostname
+    hostname: https://newsletter.gigapros.io # Recommend using FQDN for hostname
     ports:
       - "3040:9000"
     networks:
