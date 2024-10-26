@@ -1,8 +1,13 @@
-{ modulesPath, pkgs,  ... }: {
+{ modulesPath, pkgs, ... }:
+{
   imports = [ "${modulesPath}/virtualisation/amazon-image.nix" ];
   # Nix configuration
   nix.settings.trusted-users = [ "@wheel" ];
-  networking.firewall.allowedTCPPorts = [ 22 80 443 ];
+  networking.firewall.allowedTCPPorts = [
+    22
+    80
+    443
+  ];
   security.acme.defaults.email = "cadastro@gigapros.io";
   security.acme.acceptTerms = true;
   services.nginx = {
@@ -19,9 +24,10 @@
         proxyWebsockets = true; # needed if you need to use WebSocket
         extraConfig =
           # required when the target is also TLS server with multiple hosts
-          "proxy_ssl_server_name on;" +
-          # required when the server wants to use HTTP Authentication
-          "proxy_pass_header Authorization;";
+          "proxy_ssl_server_name on;"
+          +
+            # required when the server wants to use HTTP Authentication
+            "proxy_pass_header Authorization;";
       };
     };
 
@@ -31,9 +37,7 @@
       locations."/" = {
         proxyPass = "http://127.0.0.1:3020";
         proxyWebsockets = true;
-        extraConfig =
-          "proxy_ssl_server_name on;" +
-          "proxy_pass_header Authorization;";
+        extraConfig = "proxy_ssl_server_name on;" + "proxy_pass_header Authorization;";
       };
     };
 
@@ -43,9 +47,7 @@
       locations."/" = {
         proxyPass = "http://127.0.0.1:3030";
         proxyWebsockets = true;
-        extraConfig =
-          "proxy_ssl_server_name on;" +
-          "proxy_pass_header Authorization;";
+        extraConfig = "proxy_ssl_server_name on;" + "proxy_pass_header Authorization;";
       };
     };
 
@@ -55,9 +57,7 @@
       locations."/" = {
         proxyPass = "http://127.0.0.1:3040";
         proxyWebsockets = true;
-        extraConfig =
-          "proxy_ssl_server_name on;" +
-          "proxy_pass_header Authorization;";
+        extraConfig = "proxy_ssl_server_name on;" + "proxy_pass_header Authorization;";
       };
     };
 
@@ -67,9 +67,7 @@
       locations."/" = {
         proxyPass = "http://127.0.0.1:3050";
         proxyWebsockets = true;
-        extraConfig =
-          "proxy_ssl_server_name on;" +
-          "proxy_pass_header Authorization;";
+        extraConfig = "proxy_ssl_server_name on;" + "proxy_pass_header Authorization;";
       };
     };
 
@@ -79,9 +77,7 @@
       locations."/" = {
         proxyPass = "http://127.0.0.1:3060";
         proxyWebsockets = true;
-        extraConfig =
-          "proxy_ssl_server_name on;" +
-          "proxy_pass_header Authorization;";
+        extraConfig = "proxy_ssl_server_name on;" + "proxy_pass_header Authorization;";
       };
     };
   };
@@ -140,6 +136,5 @@
         "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDZudUl8jgFsOYouFL2jXFsADyDSKM0f8k/yCyVwlTMv2O3KTAN58OZcQP0NvaCE1xf0c8Z73sBDQE0LZcCuYvJv3Qfuiur2TOr0YgllnUz9XdkFWBNLykfcuOyo7Lvk0BQxXHJr2ADJVvfLRoaSpubYI40KYe2BJUXtwjUcLEUW8Pd9XknI59hCmgdJpWxotCWimGW5I+r8S5zEdTtMoJWMdDaAgzbw5AL+d227wTL0TKwA1LnCkAISgCCYcUGKG78Q8At1/gN/Q9Vl/v+CR9zYWiPgZihk2aK2LiYPPQbu5hhISyEnnJSIojDhZjCib+4Dt93bfKwMMKJxMF9XFeONINkecCyMOIIcfoGzRPoZNRyjc+TbHc84YuaizmJCHgD17dBnmxwZ75rMZHaKtGq4QJ+phP9bwP9oqAaTdDhFGcr1Ia4ozW2t1T3spDiVC3S5AxiwERLO15IDQwN8plJrIdR2lsQAs4dU3/uA5XEmcnPFVMy32fcKlUwJDMgGmM= mcosta@Marcoss-MacBook-Pro.local"
       ];
     };
-  };  
-  
+  };
 }

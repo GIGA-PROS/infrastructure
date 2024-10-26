@@ -10,6 +10,5 @@ let
   everyone = builtins.attrValues systems ++ builtins.attrValues users;
 in
 {
-  "environment.age".publicKeys = everyone;
-  "init_sql.age".publicKeys = everyone;
+  "pg_master_password.age".publicKeys = everyone;
 }
