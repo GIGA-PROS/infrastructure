@@ -2,16 +2,10 @@
   imports = [ "${modulesPath}/virtualisation/amazon-image.nix" ];
   # Nix configuration
   nix.settings.trusted-users = [ "@wheel" ];
+  networking.firewall.allowedTCPPorts = [ 22 80 443 ];
   services.caddy = {
     enable = true;
-    virtualHosts."localhost".extraConfig = ''
-        info.gigapros.io {
-            handle /* {
-                root * /var/www/chatwoot/privacy
-                file_server
-            }
-        }
-
+    configFile = pkgs.writeText "Caddyfile" ''
         notion.gigapros.io {
                 reverse_proxy localhost:3010
         }
