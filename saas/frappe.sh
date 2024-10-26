@@ -39,13 +39,8 @@ sed -i '/redis/d' Procfile
 sed -i '/watch/d' Procfile
 
 # Get the LMS and CRM apps, use --overwrite to avoid prompts
-bench get-app --resolve-deps --overwrite lms https://github.com/frappe/lms.git
-bench get-app --resolve-deps --overwrite crm https://github.com/frappe/crm.git
-
-# Install Node.js dependencies and build assets
-bench setup requirements --node
-bench setup requirements --dev
-bench build --force
+bench get-app lms
+bench get-app crm
 
 # Create the edu.gigapros.io site and install the LMS app
 if bench --site edu.gigapros.io list-apps > /dev/null 2>&1; then
@@ -57,7 +52,7 @@ else
         --db-type postgres \
         --db-host postgres \
         --db-port 5432 \
-        --db-name edu_gigapros_io \
+        --db-name edu \
         --db-root-username giga \
         --db-root-password giga \
         --no-mariadb-socket 
@@ -76,11 +71,11 @@ if bench --site crm.gigapros.io list-apps > /dev/null 2>&1; then
 else
     bench new-site crm.gigapros.io \
         --force \
-        --admin-password admin \
+        --admin-password giga \
         --db-type postgres \
         --db-host postgres \
         --db-port 5432 \
-        --db-name crm_gigapros_io \
+        --db-name crm \
         --db-root-username giga \
         --db-root-password giga \
         --no-mariadb-socket \
