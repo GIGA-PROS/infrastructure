@@ -12,8 +12,8 @@
     pm2
 
     # Sendportal
-    php
-    phpPackages.composer
+    #php
+    #phpPackages.composer
 
     # Backend
     dotnet-sdk_8

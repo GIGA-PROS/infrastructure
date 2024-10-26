@@ -1,4 +1,3 @@
-
 ### GIGA Infrastructure as Code using Nix, Terraform, and AWS
 
 This project deploys an AWS EC2 instance running NixOS using **Terraform**.
