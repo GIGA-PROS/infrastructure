@@ -12,7 +12,7 @@ services:
     volumes:
       - postgres-volume:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - 15432:5432
     networks:
       - shared-network
     healthcheck:
@@ -26,7 +26,7 @@ services:
     container_name: redis
     restart: always
     ports:
-      - 6379:6379
+      - 16379:6379
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s

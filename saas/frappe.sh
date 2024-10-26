@@ -29,10 +29,10 @@ fi
 
 # Set PostgreSQL and Redis configurations
 bench set-config -g db_host postgres
-bench set-config -g db_port 5432
-bench set-config -g redis_cache redis://redis:6379
-bench set-config -g redis_queue redis://redis:6379
-bench set-config -g redis_socketio redis://redis:6379
+bench set-config -g db_port 15432
+bench set-config -g redis_cache redis://redis:16379
+bench set-config -g redis_queue redis://redis:16379
+bench set-config -g redis_socketio redis://redis:16379
 
 # Remove Redis and watch processes from Procfile if they exist
 sed -i '/redis/d' Procfile
@@ -51,7 +51,7 @@ else
         --admin-password admin \
         --db-type postgres \
         --db-host postgres \
-        --db-port 5432 \
+        --db-port 15432 \
         --db-name edu \
         --db-root-username giga \
         --db-root-password giga \
@@ -74,7 +74,7 @@ else
         --admin-password giga \
         --db-type postgres \
         --db-host postgres \
-        --db-port 5432 \
+        --db-port 15432 \
         --db-name crm \
         --db-root-username giga \
         --db-root-password giga \
