@@ -1,41 +1,41 @@
 version: '3.8'
 
 services:
-  # postgres:
-  #   image: postgres:14.5
-  #   container_name: postgres
-  #   restart: always
-  #   environment:
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  #     POSTGRES_USER: ${POSTGRES_USER}
-  #     POSTGRES_DB: ${POSTGRES_DB}
-  #   volumes:
-  #     - postgres-volume:/var/lib/postgresql/data
-  #   ports:
-  #     - 5432:5432
-  #   networks:
-  #     - shared-network
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-  #     interval: 10s
-  #     timeout: 3s
-  #     retries: 3
+  postgres:
+    image: postgres:14.5
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - shared-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
-  # redis:
-  #   image: redis:7.2
-  #   container_name: redis
-  #   restart: always
-  #   ports:
-  #     - 6379:6379
-  #   healthcheck:
-  #     test: ["CMD", "redis-cli", "ping"]
-  #     interval: 10s
-  #     timeout: 3s
-  #     retries: 3
-  #   volumes:
-  #     - redis-data:/data
-  #   networks:
-  #     - shared-network
+  redis:
+    image: redis:7.2
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - redis-data:/data
+    networks:
+      - shared-network
 
   postiz:
     image: ghcr.io/gitroomhq/postiz-app:latest
@@ -46,7 +46,7 @@ services:
       FRONTEND_URL: ${FRONTEND_URL}
       NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
       JWT_SECRET: ${JWT_SECRET}
-      DATABASE_URL: ${POSTGRES_URL}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@host.docker.internal:${DATABASE_PORT}/${POSTGRES_DB}
       REDIS_URL: ${REDIS_URL}
       BACKEND_INTERNAL_URL: ${BACKEND_INTERNAL_URL}
       IS_GENERAL: ${IS_GENERAL}
@@ -60,27 +60,27 @@ services:
       - 3030:5000
     networks:
       - shared-network
-    # depends_on:
-    #   postgres:
-    #     condition: service_healthy
-    #   redis:
-    #     condition: service_healthy
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
   
-  # frappe:
-  #   container_name: frappe
-  #   image: frappe/bench:latest
-  #   command: bash /workspace/frappe.sh
-  #   working_dir: /home/frappe
-  #   volumes:
-  #     - .:/workspace
-  #   ports:
-  #     - 3050:8000
-  #     - 3060:9000
-  #   networks:
-  #     - shared-network
-    # depends_on:
-    #   - postgres
-    #   - redis
+  frappe:
+    container_name: frappe
+    image: frappe/bench:latest
+    command: bash /workspace/frappe.sh
+    working_dir: /home/frappe
+    volumes:
+      - .:/workspace
+    ports:
+      - 3050:8000
+      - 3060:9000
+    networks:
+      - shared-network
+    depends_on:
+      - postgres
+      - redis
 
   listmonk:
     image: listmonk/listmonk:latest
@@ -93,23 +93,23 @@ services:
       - shared-network
     environment:
       TZ: ${TZ}
-      DATABASE_URL: ${POSTGRES_URL}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@host.docker.internal:${DATABASE_PORT}/${POSTGRES_DB}
     volumes:
       - ./listmonk.toml:/listmonk/config.toml
     command: [ sh, -c, "yes | ./listmonk --install --config config.toml && ./listmonk --config config.toml" ]
-    # depends_on:
-    #   postgres:
-    #     condition: service_healthy
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 networks:
   shared-network:
     external: false
 
 volumes:
-  # postgres-volume:
-  #   external: false
-  # redis-data:
-  #   external: false
+  postgres-volume:
+    external: false
+  redis-data:
+    external: false
   postiz-config:
     external: false
   postiz-uploads:
