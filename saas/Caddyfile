@@ -20,3 +20,11 @@ post.gigapros.io {
 newsletter.gigapros.io {
 	reverse_proxy localhost:3040
 }
+
+crm.gigapros.io {
+	reverse_proxy localhost:3050
+}
+
+edu.gigapros.io {
+	reverse_proxy localhost:3050
+}
