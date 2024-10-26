@@ -4,6 +4,7 @@
   environment.systemPackages = with pkgs; [
     git
     htop
+    vim
 
     # NodeJs
     nodejs
@@ -16,6 +17,9 @@
 
     # Backend
     dotnet-sdk_8
+
+    # LLM
+    ollama
   ];
 
   # Keycloak
