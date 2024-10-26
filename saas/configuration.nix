@@ -26,6 +26,9 @@
   environment.systemPackages = with pkgs; [
     git
     vim
+    docker-compose
+    docker
+    htop
   ];
   # Users
   users.users = {
