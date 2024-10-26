@@ -102,30 +102,20 @@
     enable = true;
   };
 
-  # Add passsword at runtime
-  # https://discourse.nixos.org/t/set-password-for-a-postgresql-user-from-a-file-agenix/41377/8
-  systemd.services."postgresql-db-setup" = {
-    serviceConfig = {
-      Type = "oneshot";
-      User = "postgres";
-    };
-    after = ["postgresql.service"];
-    path = with pkgs; [ postgresql_16 replace-secret];
-    serviceConfig = {
-      RuntimeDirectory = "postgresql-setup";           
-      RuntimeDirectoryMode = "700";
-    };
-    script = ''
-      # set bash options for early fail and error output
-      set -o errexit -o pipefail -o nounset -o errtrace -o xtrace
-      shopt -s inherit_errexit
-      # Copy SQL template into temporary folder. The value of RuntimeDirectory is written into                 
-      # environment variable RUNTIME_DIRECTORY by systemd.
-      install --mode 600 ${./postgres_init_template.sql} ''$RUNTIME_DIRECTORY/init.sql
-      # fill SQL template with passwords
-      ${pkgs.replace-secret}/bin/replace-secret @PG_MASTER_PASSWORD@ ${config.age.secrets.pg_master_password.path} ''$RUNTIME_DIRECTORY/init.sql
-      # run filled SQL template
-      psql postgres --file "''$RUNTIME_DIRECTORY/init.sql"
-    '';
-  };
+  # Add passsword after pg starts
+  # https://discourse.nixos.org/t/assign-password-to-postgres-user-declaratively/9726/3
+  systemd.services.postgresql.postStart = let
+    password_file_path = config.age.secrets.pg_master_password.path;
+  in ''
+    $PSQL -tA <<'EOF'
+      DO $$
+      DECLARE password TEXT;
+      BEGIN
+        password := trim(both from replace(pg_read_file('${password_file_path}'), E'\n', '''));
+        EXECUTE format('ALTER USER backend WITH PASSWORD '''%s''';', password);
+        EXECUTE format('ALTER USER giga WITH PASSWORD '''%s''';', password);
+        EXECUTE format('ALTER USER WITH PASSWORD '''%s''';', password);
+      END $$;
+    EOF
+  '';
 }
