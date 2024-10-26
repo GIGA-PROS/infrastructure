@@ -61,7 +61,7 @@
       };
     };
 
-    virtualHosts."crm.gigapros.io" = {
+    virtualHosts."edu.gigapros.io" = {
       enableACME = true;
       forceSSL = true;
       locations."/" = {
@@ -73,11 +73,11 @@
       };
     };
 
-    virtualHosts."edu.gigapros.io" = {
+    virtualHosts."crm.gigapros.io" = {
       enableACME = true;
       forceSSL = true;
       locations."/" = {
-        proxyPass = "http://127.0.0.1:3050";
+        proxyPass = "http://127.0.0.1:3060";
         proxyWebsockets = true;
         extraConfig =
           "proxy_ssl_server_name on;" +
