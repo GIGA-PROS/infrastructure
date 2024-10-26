@@ -67,19 +67,23 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-  # Used to host CRM and LMS
+  
+  # Frappe CRM and LMS
   frappe:
     container_name: frappe
     image: frappe/bench:latest
-    command: bash /workspace/frappe/frappe.sh
-    environment:
-      - SHELL=/bin/bash
+    command: bash /workspace/frappe.sh
     working_dir: /home/frappe
     volumes:
       - .:/workspace
     ports:
       - 8000:8000
       - 9000:9000
+    networks:
+      - shared-network
+    depends_on:
+      - postgres
+      - redis
 
   # Listmonk application service
   listmonk:
