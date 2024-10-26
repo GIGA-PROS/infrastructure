@@ -2,6 +2,41 @@
   imports = [ "${modulesPath}/virtualisation/amazon-image.nix" ];
   # Nix configuration
   nix.settings.trusted-users = [ "@wheel" ];
+  services.caddy = {
+    enable = true;
+    virtualHosts."localhost".extraConfig = ''
+        info.gigapros.io {
+            handle /* {
+                root * /var/www/chatwoot/privacy
+                file_server
+            }
+        }
+
+        notion.gigapros.io {
+                reverse_proxy localhost:3010
+        }
+
+        meet.gigapros.io {
+                reverse_proxy localhost:3020
+        }
+
+        post.gigapros.io {
+                reverse_proxy localhost:3030
+        }
+
+        newsletter.gigapros.io {
+            reverse_proxy localhost:3040
+        }
+
+        crm.gigapros.io {
+            reverse_proxy localhost:3050
+        }
+
+        edu.gigapros.io {
+            reverse_proxy localhost:3050
+        }
+    '';
+  };
   nix = {
     package = pkgs.nixVersions.stable;
     extraOptions = ''
