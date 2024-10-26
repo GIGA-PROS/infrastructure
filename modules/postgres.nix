@@ -11,6 +11,9 @@
     package = pkgs.postgresql_16;
     ensureDatabases = [
       "backend"
+      "giga"
+      "frappe"
+      "listmonk"
     ];
     settings = {
       shared_preload_libraries = "pg_stat_statements";
