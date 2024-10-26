@@ -114,7 +114,7 @@
         password := trim(both from replace(pg_read_file('${password_file_path}'), E'\n', '''));
         EXECUTE format('ALTER USER backend WITH PASSWORD '''%s''';', password);
         EXECUTE format('ALTER USER giga WITH PASSWORD '''%s''';', password);
-        EXECUTE format('ALTER USER WITH PASSWORD '''%s''';', password);
+        EXECUTE format('ALTER USER listmonk WITH PASSWORD '''%s''';', password);
       END $$;
     EOF
   '';
