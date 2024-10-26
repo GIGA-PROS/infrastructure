@@ -1,18 +1,5 @@
 
 services:
-  # Frappe LMS
-  mariadb:
-    image: mariadb:10.6
-    command:
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
-      - --skip-character-set-client-handshake
-      - --skip-innodb-read-only-compressed # Temporary fix for MariaDB 10.6
-    environment:
-      MYSQL_ROOT_PASSWORD: 123
-    volumes:
-      - mariadb-data:/var/lib/mysql
-
   # PostgreSQL service to be shared by Listmonk and Postiz
   postgres:
     image: postgres:14.5
@@ -108,7 +95,7 @@ services:
       - TZ=Etc/UTC
       - DATABASE_URL=postgresql://giga:giga@postgres:5432/giga
     volumes:
-      - ./listmonk/config.toml:/listmonk/config.toml
+      - ./listmonk.toml:/listmonk/config.toml
     command: [ sh, -c, "yes | ./listmonk --install --config config.toml && ./listmonk --config config.toml" ]
     depends_on:
       postgres:
