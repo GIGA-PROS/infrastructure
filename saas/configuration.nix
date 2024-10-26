@@ -113,6 +113,7 @@
     docker-compose
     docker
     htop
+    ollama
   ];
   # Users
   users.users = {
