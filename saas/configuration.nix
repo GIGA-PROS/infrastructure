@@ -5,30 +5,23 @@
   networking.firewall.allowedTCPPorts = [ 22 80 443 ];
   services.caddy = {
     enable = true;
-    configFile = pkgs.writeText "Caddyfile" ''
-        notion.gigapros.io {
-                reverse_proxy localhost:3010
-        }
-
-        meet.gigapros.io {
-                reverse_proxy localhost:3020
-        }
-
-        post.gigapros.io {
-                reverse_proxy localhost:3030
-        }
-
-        newsletter.gigapros.io {
-            reverse_proxy localhost:3040
-        }
-
-        crm.gigapros.io {
-            reverse_proxy localhost:3050
-        }
-
-        edu.gigapros.io {
-            reverse_proxy localhost:3050
-        }
+    virtualHosts."notion.gigapros.io".extraConfig = ''
+        reverse_proxy localhost:3010
+    '';
+    virtualHosts."meet.gigapros.io".extraConfig = ''
+        reverse_proxy localhost:3020
+    '';
+    virtualHosts."post.gigapros.io".extraConfig = ''
+        reverse_proxy localhost:3030
+    '';
+    virtualHosts."newsletter.gigapros.io".extraConfig = ''
+        reverse_proxy localhost:3040
+    '';
+    virtualHosts."crm.gigapros.io".extraConfig = ''
+        reverse_proxy localhost:3050
+    '';
+    virtualHosts."edu.gigapros.io".extraConfig = ''
+        reverse_proxy localhost:3050
     '';
   };
   nix = {
