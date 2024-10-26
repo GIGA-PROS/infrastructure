@@ -22,6 +22,11 @@
     ollama
   ];
 
+  environment.variables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
+
   # Keycloak
   #services.keycloak.enable = true;
 
