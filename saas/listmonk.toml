@@ -5,7 +5,7 @@ address = "0.0.0.0:9000"
 # Database.
 [db]
 host = "postgres"  # Connect to the shared postgres service
-port = 5432
+port = 15432
 user = "giga"  # Updated to match the credentials in docker-compose
 password = "giga"
 database = "giga"
