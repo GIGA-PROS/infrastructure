@@ -3,27 +3,89 @@
   # Nix configuration
   nix.settings.trusted-users = [ "@wheel" ];
   networking.firewall.allowedTCPPorts = [ 22 80 443 ];
-  services.caddy = {
+  security.acme.defaults.email = "cadastro@gigapros.io";
+  security.acme.acceptTerms = true;
+  services.nginx = {
     enable = true;
-    virtualHosts."notion.gigapros.io".extraConfig = ''
-        reverse_proxy localhost:3010
-    '';
-    virtualHosts."meet.gigapros.io".extraConfig = ''
-        reverse_proxy localhost:3020
-    '';
-    virtualHosts."post.gigapros.io".extraConfig = ''
-        reverse_proxy localhost:3030
-    '';
-    virtualHosts."newsletter.gigapros.io".extraConfig = ''
-        reverse_proxy localhost:3040
-    '';
-    virtualHosts."crm.gigapros.io".extraConfig = ''
-        reverse_proxy localhost:3050
-    '';
-    virtualHosts."edu.gigapros.io".extraConfig = ''
-        reverse_proxy localhost:3050
-    '';
+    recommendedProxySettings = true;
+    recommendedTlsSettings = true;
+    # other Nginx options
+
+    virtualHosts."notion.gigapros.io" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:3010";
+        proxyWebsockets = true; # needed if you need to use WebSocket
+        extraConfig =
+          # required when the target is also TLS server with multiple hosts
+          "proxy_ssl_server_name on;" +
+          # required when the server wants to use HTTP Authentication
+          "proxy_pass_header Authorization;";
+      };
+    };
+
+    virtualHosts."meet.gigapros.io" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:3020";
+        proxyWebsockets = true;
+        extraConfig =
+          "proxy_ssl_server_name on;" +
+          "proxy_pass_header Authorization;";
+      };
+    };
+
+    virtualHosts."post.gigapros.io" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:3030";
+        proxyWebsockets = true;
+        extraConfig =
+          "proxy_ssl_server_name on;" +
+          "proxy_pass_header Authorization;";
+      };
+    };
+
+    virtualHosts."newsletter.gigapros.io" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:3040";
+        proxyWebsockets = true;
+        extraConfig =
+          "proxy_ssl_server_name on;" +
+          "proxy_pass_header Authorization;";
+      };
+    };
+
+    virtualHosts."crm.gigapros.io" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:3050";
+        proxyWebsockets = true;
+        extraConfig =
+          "proxy_ssl_server_name on;" +
+          "proxy_pass_header Authorization;";
+      };
+    };
+
+    virtualHosts."edu.gigapros.io" = {
+      enableACME = true;
+      forceSSL = true;
+      locations."/" = {
+        proxyPass = "http://127.0.0.1:3050";
+        proxyWebsockets = true;
+        extraConfig =
+          "proxy_ssl_server_name on;" +
+          "proxy_pass_header Authorization;";
+      };
+    };
   };
+
   nix = {
     package = pkgs.nixVersions.stable;
     extraOptions = ''
