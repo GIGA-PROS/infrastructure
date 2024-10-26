@@ -93,6 +93,7 @@ output.json
 
 # Nix
 .env*
+!/saas/.env.template
 result
 *.tfvars
 *.qcow2
