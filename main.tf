@@ -185,7 +185,7 @@ resource "aws_instance" "vm" {
 
   # We could use a smaller instance size, but at the time of this writing the
   # t3.micro instance type is available for 750 hours under the AWS free tier.
-  instance_type = "t3.micro"
+  instance_type = "t2.large"
 
   root_block_device {
     volume_size = 80
