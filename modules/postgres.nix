@@ -40,25 +40,6 @@
         };
       }
     ];
-    identMap = ''
-      # ArbitraryMapName systemUser DBUser
-      superuser_map      root       postgres
-      superuser_map      postgres   postgres
-      superuser_map      deploy     postgres
-      superuser_map      deploy     giga
-      superuser_map      deploy     backend
-      superuser_map      deploy     listmonk
-      superuser_map      kanagawa   postgres
-      superuser_map      kanagawa   giga
-      superuser_map      kanagawa   backend
-      superuser_map      kanagawa   listmonk
-      superuser_map      benevides  postgres
-      superuser_map      benevides  giga
-      superuser_map      benevides  backend
-      superuser_map      benevides  listmonk
-      # Let other names login as themselves
-      superuser_map      /^(.*)$    \1
-    '';
     settings = {
       shared_preload_libraries = "pg_stat_statements";
       # pg_stat_statements config, nested attr sets need to be
