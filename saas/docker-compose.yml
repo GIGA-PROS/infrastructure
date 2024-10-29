@@ -17,7 +17,7 @@ services:
     environment:
       POSTGRES_USER: giga
       POSTGRES_PASSWORD: giga
-      POSTGRES_DB: postgres
+      POSTGRES_DB: sendportal
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d
@@ -28,23 +28,12 @@ services:
 
   # Sendportal service
   sendportal:
-    image: php:7.3-apache
+    build:
+      context: .
+      dockerfile: Dockerfile
     working_dir: /var/www/html
-    volumes:
-      - ./sendportal:/var/www/html
-    environment:
-      - DB_HOST=postgres
-      - DB_DATABASE=sendportal
-      - DB_USERNAME=giga
-      - DB_PASSWORD=giga
     depends_on:
       - postgres
-    entrypoint: |
-      /bin/sh -c "\
-      if [ -f /var/www/html/.sendportal.env ]; then \
-        mv /var/www/html/.sendportal.env /var/www/html/.env; \
-      fi && \
-      composer install "
     networks:
       - shared-network
 
@@ -69,7 +58,7 @@ services:
       - postiz-config:/config/
       - postiz-uploads:/uploads/
     ports:
-      - 3030:5000
+      - "3030:5000"
     networks:
       - shared-network
     extra_hosts:
