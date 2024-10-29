@@ -1,40 +1,50 @@
-
 services:
-  # PostgreSQL service to be shared by Listmonk and Postiz
-  postgres:
-    image: postgres:14.5
-    container_name: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: giga
-      POSTGRES_USER: giga
-      POSTGRES_DB: giga
-    volumes:
-      - postgres-volume:/var/lib/postgresql/data
+  # Caddy service
+  caddy:
+    image: caddy:latest
     ports:
-      - 5432:5432
+      - "8080:8080"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    depends_on:
+      - sendportal
     networks:
       - shared-network
-    healthcheck:
-      test: pg_isready -U giga -d giga
-      interval: 10s
-      timeout: 3s
-      retries: 3
 
-  # Redis service for Postiz
-  redis:
-    image: redis:7.2
-    container_name: redis
-    restart: always
-    ports:
-      - 6379:6379
-    healthcheck:
-      test: redis-cli ping
-      interval: 10s
-      timeout: 3s
-      retries: 3
+  # PostgreSQL service
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: giga
+      POSTGRES_PASSWORD: giga
+      POSTGRES_DB: sendportl
     volumes:
-      - redis-data:/data
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - shared-network
+
+  # Sendportal service
+  sendportal:
+    image: php:7.3-apache
+    working_dir: /var/www/html
+    volumes:
+      - ./sendportal:/var/www/html
+    environment:
+      - DB_HOST=postgres
+      - DB_DATABASE=sendportl
+      - DB_USERNAME=giga
+      - DB_PASSWORD=giga
+    depends_on:
+      - postgres
+    entrypoint: |
+      /bin/sh -c "\
+      if [ -f /var/www/html/.sendportal.env ]; then \
+        cp /var/www/html/.sendportal.env /var/www/html/.env; \
+      fi && \
+      composer install && \
+      apache2-foreground"
     networks:
       - shared-network
 
@@ -48,8 +58,8 @@ services:
       FRONTEND_URL: "https://post.gigapros.io"
       NEXT_PUBLIC_BACKEND_URL: "https://post.gigapros.io/api"
       JWT_SECRET: "76a218bb-e83b-4ca3-a8c7-8c3c7abb0271"
-      DATABASE_URL: "postgresql://giga:giga@postgres:5432/giga"
-      REDIS_URL: "redis://redis:6379"
+      DATABASE_URL: "postgresql://giga:20eee0e04edf4f32a763829d021aa061@host.docker.internal:5432/giga"
+      REDIS_URL: "redis://host.docker.internal:6379"
       BACKEND_INTERNAL_URL: "http://localhost:3000"
       IS_GENERAL: "true"
       STORAGE_PROVIDER: "local"
@@ -62,59 +72,14 @@ services:
       - 3030:5000
     networks:
       - shared-network
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-  
-  # Frappe CRM and LMS
-  frappe:
-    container_name: frappe
-    image: frappe/bench:latest
-    command: bash /workspace/frappe.sh
-    working_dir: /home/frappe
-    volumes:
-      - .:/workspace
-    ports:
-      - 3050:8000
-      - 3060:9000
-    networks:
-      - shared-network
-    depends_on:
-      - postgres
-      - redis
-
-  # Listmonk application service
-  listmonk:
-    image: listmonk/listmonk:latest
-    container_name: listmonk
-    restart: unless-stopped
-    hostname: https://newsletter.gigapros.io # Recommend using FQDN for hostname
-    ports:
-      - "3040:9000"
-    networks:
-      - shared-network
-    environment:
-      - TZ=Etc/UTC
-      - DATABASE_URL=postgresql://giga:giga@postgres:5432/giga
-    volumes:
-      - ./listmonk.toml:/listmonk/config.toml
-    command: [ sh, -c, "yes | ./listmonk --install --config config.toml && ./listmonk --config config.toml" ]
-    depends_on:
-      postgres:
-        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 networks:
   shared-network:
     external: false
 
 volumes:
-  postgres-volume:
-    external: false
-  redis-data:
-    external: false
+  postgres_data:
   postiz-config:
-    external: false
   postiz-uploads:
-    external: false
