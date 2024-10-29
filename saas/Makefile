@@ -6,3 +6,4 @@ TARGET_DIR=sendportal
 
 clone:
 	git clone --depth 1 --branch $(BRANCH) $(REPO_URL) $(TARGET_DIR)
+	docker-compose up --build
