@@ -17,9 +17,10 @@ services:
     environment:
       POSTGRES_USER: giga
       POSTGRES_PASSWORD: giga
-      POSTGRES_DB: sendportl
+      POSTGRES_DB: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:
@@ -33,7 +34,7 @@ services:
       - ./sendportal:/var/www/html
     environment:
       - DB_HOST=postgres
-      - DB_DATABASE=sendportl
+      - DB_DATABASE=sendportal
       - DB_USERNAME=giga
       - DB_PASSWORD=giga
     depends_on:
@@ -41,10 +42,9 @@ services:
     entrypoint: |
       /bin/sh -c "\
       if [ -f /var/www/html/.sendportal.env ]; then \
-        cp /var/www/html/.sendportal.env /var/www/html/.env; \
+        mv /var/www/html/.sendportal.env /var/www/html/.env; \
       fi && \
-      composer install && \
-      apache2-foreground"
+      composer install "
     networks:
       - shared-network
 
