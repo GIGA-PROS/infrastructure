@@ -38,6 +38,13 @@ RUN php artisan migrate --verbose
 # Run Laravel installation
 RUN php artisan sp:install
 
+RUN php artisan key:generate
+
+RUN php artisan vendor:publish --provider=Sendportal\\Base\\SendportalBaseServiceProvider
+# crontab -e
+# * * * * * cd /home/ubuntu/sendportal && php artisan schedule:run >> /dev/null 2>&1
+
+
 # Set up a cron job for Laravel scheduling
 RUN echo "* * * * * cd /var/www/html && php artisan schedule:run >> /dev/null 2>&1" | crontab -
 
