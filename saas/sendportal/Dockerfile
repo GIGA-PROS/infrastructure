@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y \
     php-mysql \
     php-tokenizer \ 
     php-xml \
-    php-zip 
+    php-zip \
+    php-pgsql
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -29,6 +30,10 @@ COPY .sendportal.env .env
 
 # Install PHP dependencies
 RUN composer install
+
+# DB_SSLMODE=prefer # add this to the .env??
+
+RUN php artisan migrate --verbose
 
 # Run Laravel installation
 RUN php artisan sp:install

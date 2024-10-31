@@ -17,7 +17,7 @@ services:
     environment:
       POSTGRES_USER: giga
       POSTGRES_PASSWORD: giga
-      POSTGRES_DB: sendportal
+      POSTGRES_DB: giga
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d
@@ -29,7 +29,7 @@ services:
   # Sendportal service
   sendportal:
     build:
-      context: .
+      context: ./sendportal/
       dockerfile: Dockerfile
     working_dir: /var/www/html
     depends_on:
