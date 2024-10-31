@@ -1,11 +1,19 @@
 # Dockerfile for Sendportal service
-FROM php:7.3-apache
+FROM php:8.2.25-cli-alpine3.20
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     cron \
-    && rm -rf /var/lib/apt/lists/*
+    openssl \
+    php-bcmath \
+    php-curl \
+    php-json \
+    php-mbstring \
+    php-mysql \
+    php-tokenizer \ 
+    php-xml \
+    php-zip 
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
